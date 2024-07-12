@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const wrapasync = require("../utils/wrapasync");
+const wrapAsync = require("../utils/wrapasync");
 const listingController = require("../controllers/listings");
 const { isLoggedIn, isOwner, validateListing } = require("../middleware");
 
@@ -10,31 +10,34 @@ const upload = multer({ storage });
 
 router
   .route("/")
-  .get(wrapasync(listingController.index))
+  .get(wrapAsync(listingController.index)) //Index Route
   .post(
+    //create route
     isLoggedIn,
+    upload.single("listing[image]"),
     validateListing,
-    wrapasync(listingController.createListing)
+    wrapAsync(listingController.createListing)
   );
 
 router.get("/new", isLoggedIn, listingController.renderNewForm);
 
 router
   .route("/:id")
-  .get(wrapasync(listingController.showlisting))
+  .get(wrapAsync(listingController.showlisting))
   .put(
     isLoggedIn,
     isOwner,
+    upload.single("listing[image]"),
     validateListing,
-    wrapasync(listingController.updateListing)
+    wrapAsync(listingController.updateListing)
   )
-  .delete(isLoggedIn, isOwner, wrapasync(listingController.destroyListing));
+  .delete(isLoggedIn, isOwner, wrapAsync(listingController.destroyListing));
 
 router.get(
   "/:id/edit",
   isLoggedIn,
   isOwner,
-  wrapasync(listingController.renderEditForm)
+  wrapAsync(listingController.renderEditForm)
 );
 
 module.exports = router;
